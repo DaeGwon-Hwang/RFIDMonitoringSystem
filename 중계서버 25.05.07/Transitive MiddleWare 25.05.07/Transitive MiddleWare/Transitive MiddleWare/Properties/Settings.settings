@@ -1,0 +1,147 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BPNS.TransitiveMiddleware.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="APP_bUseFileLog" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="NET_ListeningSocketCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="NET_MWTimeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60000</Value>
+    </Setting>
+    <Setting Name="LOG_LogFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Logs</Value>
+    </Setting>
+    <Setting Name="LOG_SystemLogFilename" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SYS</Value>
+    </Setting>
+    <Setting Name="LOG_ApplicationLogFilename" Type="System.String" Scope="User">
+      <Value Profile="(Default)">APP</Value>
+    </Setting>
+    <Setting Name="LOG_bDateAppendToLogFileName" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="NET_BufferSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8192</Value>
+    </Setting>
+    <Setting Name="NET_MaxPacketSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1024</Value>
+    </Setting>
+    <Setting Name="RFID_MinTagReadCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="RFID_GateInOutMergeTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="APP_MAXListCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">200</Value>
+    </Setting>
+    <Setting Name="RFID_Check_Last_State" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Y</Value>
+    </Setting>
+    <Setting Name="APP_DisconnectDislayTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="RFID_Last_State_Interval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">120</Value>
+    </Setting>
+    <Setting Name="APP_Exit_Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">bpns</Value>
+    </Setting>
+    <Setting Name="APP_bPreventDoubleRun" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RFID_Threshold_Count" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="RFID_bCheckCarNoFormat" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DB_SID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPNSOLUTION</Value>
+    </Setting>
+    <Setting Name="DB_HostName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">112.162.225.130</Value>
+    </Setting>
+    <Setting Name="DB_Type" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ORACLE</Value>
+    </Setting>
+    <Setting Name="DB_Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">HIDB1</Value>
+    </Setting>
+    <Setting Name="DB_Pass" Type="System.String" Scope="User">
+      <Value Profile="(Default)">prodc86e</Value>
+    </Setting>
+    <Setting Name="DB_UserID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C86E</Value>
+    </Setting>
+    <Setting Name="NET_EQErrorCheckTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="FROM_PAMS_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8091</Value>
+    </Setting>
+    <Setting Name="DB_Timeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30000</Value>
+    </Setting>
+    <Setting Name="DB_Batch_Timeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SMSResendSecond" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1800</Value>
+    </Setting>
+    <Setting Name="POWER_SMSSendTerm" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">180</Value>
+    </Setting>
+    <Setting Name="POWER_ShutdownTerm" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
+    <Setting Name="MWID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D001</Value>
+    </Setting>
+    <Setting Name="FROM_MW_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">11812</Value>
+    </Setting>
+    <Setting Name="FROM_JSON_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">12012</Value>
+    </Setting>
+    <Setting Name="FROM_RFID_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">12015</Value>
+    </Setting>
+    <Setting Name="TO_PAMS_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">9011</Value>
+    </Setting>
+    <Setting Name="TO_PAMS_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">172.30.34.23</Value>
+    </Setting>
+    <Setting Name="TO_CTRL_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.200.231</Value>
+    </Setting>
+    <Setting Name="TO_CTRL_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20080</Value>
+    </Setting>
+    <Setting Name="CTRL_TIMEOUT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3000</Value>
+    </Setting>
+    <Setting Name="TO_MW_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.200.22</Value>
+    </Setting>
+    <Setting Name="TO_MW_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">11912</Value>
+    </Setting>
+    <Setting Name="MW_TIMEOUT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3000</Value>
+    </Setting>
+    <Setting Name="PRT_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">9100</Value>
+    </Setting>
+    <Setting Name="PRT_TIMEOUT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">9000</Value>
+    </Setting>
+    <Setting Name="IS_LOGGING_CONNT_HIS" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
