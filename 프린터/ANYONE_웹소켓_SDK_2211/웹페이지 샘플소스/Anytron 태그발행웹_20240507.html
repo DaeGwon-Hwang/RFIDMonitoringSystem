@@ -1,0 +1,766 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ANYTRON 태그발행 WEB</title>
+    <!--- JQuery 선언 --->
+    <script src="./jquery.min.js"></script>
+
+    <!-- SheetJS 라이브러리 추가 -->
+    <script src="./xlsx.full.min.js"></script>
+
+    <!--- 태그발행기 WEB Socket 스크립트 선언 --->
+    <script src="TagPrintXWSC.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+
+        // 바이텍테크놀로지 TagPrintX_WSC 객체
+        var TagPrinter;
+
+        // 로그모드
+        // 릴리즈시에는 g_logMode = "RELEASE"로 변경
+        var g_logMode = "RELEASE";
+
+        // 사용자 발행중지 요청 플래그
+        var g_bUserRequestStop = false;
+
+        // 사용자가 화면에서 선택한 태그발행 대상물품의 행번호 저장을 위한 배열 선언
+        var g_arrCheckedRowNo = new Array();
+
+        // 현재 발행할 대상 데이터 처리를 위한 인덱스
+        var g_currentPrintingIndex = 0;
+
+        // 발행기 연결 방법
+        var g_connectionType = "USB";
+
+        // 발행기 IP주소
+        var g_ipAddress = "";
+
+        // 발행기 TCP 포트
+        var g_tcpPort = "";
+
+        var g_formFileBaseFolder = "C:\\Program Files (x86)\\ANYTRON\\AnytronRfidWSS\\";
+        var g_formFilePath = "";
+
+        var g_excelTotalRowCount = 0;
+        var g_excelTotalColumnsCount = 0;
+
+        var g_totalErrorCount = 0;
+
+        // 바이텍테크놀로지 TagPrintX_WSS 서버 연결을 위한 초기화 작업
+        function tagPrintXWSSinit() {
+            TagPrinter = new TagPrintX_WSC(false);
+            TagPrinter.init();
+        }
+
+        // 테스트 웹페이지의 TEXTAREA에 로그 표시
+        // 실제 구현시에는 불필요하므로 제거할 것
+        function writeToScreen(message) {
+            if (g_logMode == "DEBUG") document.getElementById("comm_log").value += (message + "\r\n");
+        }
+
+        // 사용자 요청에 의해 발행을 중단하기 위한 함수
+        // 실제 구현하는 웹에서 불필요할 경우 제거
+        function setPrintPause() {
+            g_bUserRequestStop = true;
+        }
+
+        // 브라우저를 닫기전에 연결된 소켓을 모두 닫는다.
+        function onBrowserUnload() {
+            TagPrinter.setFiredBrowserUnload(true);
+            TagPrinter.doCloseTagPrintXWSS();
+        }
+
+        // Setup 화면 호출을 위한 함수
+        function Setup() {
+            TagPrinter.setup(g_connectionType, g_ipAddress, g_tcpPort);
+        }
+
+        function InitErrorCount() {
+            g_totalErrorCount = 0;
+            $('#error_qty').html(g_totalErrorCount);
+        }
+
+
+        // 사용자가 태그발행을 요청한 경우 선택된 물품정보를 확인하여 처리하고,
+        // BitekTagPrint() 함수를 호출하여 첫번째 태그발행을 수행한다.
+        // 복수개의 태그를 발행할 경우에는 첫번째 태그발행은 본 함수에서 처리하고,
+        // 두번째 부터는 태그발행 완료 이벤트 핸들러 onPrintCompleted 함수에서 BitekTagPrint() 함수를 호출하여 태그발행을 수행한다.
+
+        function BitekTagPrintFirst() {
+            g_bUserRequestStop = false;
+            g_arrCheckedRowNo = new Array();
+
+            $("input:checkbox[name=rowSelect]:checked").each(function () {
+                let checkVal = $(this).val();
+                g_arrCheckedRowNo.push(checkVal);
+            });
+            if (g_arrCheckedRowNo.length <= 0) { alert("선택된 물품정보가 없습니다."); return; }
+
+
+            // 서식파일(인쇄 포맷 파일)을 지정한다.
+            // 실제 사용할 서식파일의 전체경로명을 지정한다.
+            let formFileName = $('#formFilePath').val();
+            if (formFileName == '') {
+                alert('서식파일이 지정되어 있지 않습니다. 파일선택 후 다시 시도하세요.');
+                return;
+            }
+
+            g_formFilePath = g_formFileBaseFolder + formFileName;
+            TagPrinter.setform(g_formFilePath);
+
+            // 첫번째 태그발행을 시도한다.
+            // 두번째 이후부터는 onPrintCompleted 이벤트 핸들러에 의해서 처리된다.
+            g_currentPrintingIndex = 0;
+
+            setTimeout(BitekTagPrint, 300);
+        }
+
+
+        // 태그발행을 수행한다.
+        // 태그발행에 필요한 데이터를 추출하여 실제 발행을 담당하는 tagPrintX.print() 함수에 인자값을 전달하여 발행을 수행한다.
+        // 발행결과는 onPrintCompleted 이벤트 핸들러에서 처리한다.
+
+        function BitekTagPrint() {
+            let VAR_DATA = '';
+            let EPC_DATA = '';
+
+            const selectedEpcColumn = $('#cbEpcColumns option:selected').val();
+
+            for (let colNo = 0; colNo < arrExcelColumns.length; colNo++) {
+                const colId = '#excelDataColumns_' + g_arrCheckedRowNo[g_currentPrintingIndex] + '_' + colNo;
+                let colData = $(colId).text();
+                if (colNo == selectedEpcColumn)
+                    EPC_DATA = colData;
+
+                VAR_DATA += (colData + '!!');
+            }
+
+
+            // 웹화면의 발행현황 정보 변경
+            $('#current_print_id').html(g_arrCheckedRowNo[g_currentPrintingIndex]);
+            $('#print_progress').html((g_currentPrintingIndex + 1) + "/" + g_arrCheckedRowNo.length);
+
+            // TagPrinter.print() 함수를 호출하여 한건의 태그발행을 수행한다.
+            // 태그발행이 완료되면 onPrintCompleted 이벤트가 발생되고,  onPrintCompleted 이벤트 핸들러에서 발행결과에 따른 처리가 수행된다.
+            TagPrinter.print(g_connectionType, g_ipAddress, g_tcpPort, VAR_DATA, EPC_DATA);
+
+            // 다음 라벨 발행을 위한 인덱스를 증가
+            g_currentPrintingIndex++;
+        }
+
+
+        // 태그발행을 제외한 오퍼레이션 처리 완료 이벤트 핸들러
+        function onOperationCompleted () {
+            if (TagPrinter.getLastErrorCode() == 0) {
+                    alert("설정 완료");
+            } else {
+                    alert("설정 오류. 에러코드 : " + TagPrinter.getLastErrorMessage());
+            }
+        }
+
+        function onSelectFormCompleted() {
+            let receiveMsg = TagPrinter.getLastReceivedMessage();
+            let path = receiveMsg.ReturnMsg;
+            $('#formFilePath').val(path);
+        }
+
+        // 엑셀파일 선택 오퍼레이션 처리 완료 이벤트 핸들러
+        function onSelectExcelCompleted() {
+            let receiveMsg = TagPrinter.getLastReceivedMessage();
+
+            let path = receiveMsg.ReturnMsg;
+            $('#excelFilePath').val(path);
+        }
+
+        // 한장의 태그발행이 완료된 후 호출되는 이벤트 핸들러
+        function onPrintCompleted() {
+
+            let rslt_code = TagPrinter.getLastErrorCode();
+            let err_cnt = Number(TagPrinter.getLastErrorCount());
+
+            g_totalErrorCount = g_totalErrorCount + err_cnt;
+
+            document.getElementById("current_print_result").innerHTML = rslt_code == 0 ? "성공" : "실패";
+            document.getElementById("last_error_code").innerHTML = rslt_code;
+
+            $('#error_qty').html(g_totalErrorCount);
+
+            if (rslt_code == 0) {
+                // 여기에 발행성공시 처리할 로직 구현
+                // 화면 갱신
+                //let obj = document.getElementById("TAG_WRT_DT_" + g_arrCheckedRowNo[g_currentPrintingIndex - 1]);
+                //let today = new Date();
+                //obj.innerHTML = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate() + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+                let obj2 = document.getElementById("printResultColumn_" + g_arrCheckedRowNo[g_currentPrintingIndex - 1]);
+                obj2.innerHTML = "성공";
+                document.getElementById("last_error_msg").innerHTML = "SUCCESS";
+                $(obj2).parent().css('background', 'orange');
+                $(obj2).parent().css('color', 'white');
+
+
+                // ////////////////////////////////////////////////////////////////////////
+                // 여기에 1건 발생성공시 처리결과 DB업데이트 로직 구현
+                // ////////////////////////////////////////////////////////////////////////
+
+
+
+                // 요청한 수량 중 남은 수량이 있으면
+                if (g_currentPrintingIndex < g_arrCheckedRowNo.length) {
+                    // 사용자가 일시중지하기전까지 BitakTagPrint()함수를 호출하여 다음태그를 발행한다.
+                    if (!g_bUserRequestStop) {
+                        setTimeout(BitekTagPrint, 0);
+                    }
+                }
+                else {
+                    // ////////////////////////////////////////////////////////////////////////
+                    // 요청한 모든 발행이 완료된 경우 처리할 로직 구현
+                    // ////////////////////////////////////////////////////////////////////////
+                    alert("요청한 RFID 태그발행이 모두 완료되었습니다.");
+                }
+            }
+            else {
+                // 여기에 발행실패시 처리할 로직 구현
+                // 여기에 1건 발생성공시 처리결과 DB업데이트 로직 구현
+                let obj2 = document.getElementById("printResultColumn_" + g_arrCheckedRowNo[g_currentPrintingIndex - 1]);
+                obj2.innerHTML = "실패";
+                document.getElementById("last_error_msg").innerHTML = TagPrinter.getLastErrorMessage();
+
+                $(obj2).parent().css('background', 'red');
+                $(obj2).parent().css('color', 'white');
+
+                alert("RFID 태그발행 도중 에러가 발생하였습니다. \n에러코드 : " + rslt_code + " 에러내용 : " + TagPrinter.getLastErrorMessage());
+            }
+        }
+
+        function SetConnectionType(cType) {
+            g_connectionType = cType;
+
+            if (cType == "IP") {
+                document.getElementById("ip_address").readOnly = false;
+                document.getElementById("tcp_port").readOnly = false;
+                SetIpAddress(document.getElementById("ip_address").value);
+                SetTcpPort(document.getElementById("tcp_port").value);
+            }
+            else {
+                document.getElementById("ip_address").readOnly = true;
+                document.getElementById("tcp_port").readOnly = true;
+            }
+        }
+
+        function SetIpAddress(ip) {
+            g_ipAddress = ip;
+        }
+
+        function SetTcpPort(port) {
+            g_tcpPort = port;
+        }
+
+        // 이벤트 등록
+        // 브라우저가 로드되면 tagPrintXWSSinit()를 호출하여 초기화 수행
+        window.addEventListener("load", tagPrintXWSSinit, false);
+
+        // 브라우저를 닫을때 onBrowserUnload()를 호출하여 소켓연결 해제
+        window.addEventListener("unload", onBrowserUnload, false);
+
+        // 설정 오퍼레이션 수행 완료 후 처리될 이벤트 핸들러 등록
+        window.addEventListener("onOperationCompleted", onOperationCompleted);
+
+
+        // 태그발행 1장이 완료될 때마다 처리될 이벤트 핸들러 등록
+        window.addEventListener("onPrintCompleted", onPrintCompleted);
+
+
+    </script>
+        <script language="javascript">
+
+            var targetRowFrom = 1;
+            var targetRowTo = 1;
+            var targetPrintQty = 1;
+            var epcColumnNo = "";
+            var arrExcelColumns = new Array();
+            var g_allRowsSelected = false;
+    
+            $(document).ready(function() {
+                document.getElementById('formlnput').addEventListener('change', handleFormFileSelect, false);
+                document.getElementById('excelInput').addEventListener('change', handleExcelFileSelect, false);
+            });
+   
+            function handleFormFileSelect(event) {
+                $('#formFilePath').val(event.target.files[0].name);
+                event.target.value = '';
+            }
+    
+            function handleExcelFileSelect(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                $('#excelFilePath').val(file.name);
+    
+                ShowLoadingExcel();
+    
+                // 기존의 thead와 tbody가 존재하면 삭제
+                clearExistExcelData('#excelDataTable');
+    
+    
+                reader.onload = function (event) {
+                    const data = new Uint8Array(event.target.result);
+                    processData(data);
+                    CloseLoading();
+    
+    
+                    // checkbox에 이벤트 넣기
+                    $('input[name=rowSelect]').change(function () {
+                        if ($(this).is(":checked")) {
+                            $(this).parent().css('background', '#0E8BD8');
+                            $(this).parent().css('color', '#ffffff');
+                        } else {
+                            $(this).parent().css('background', '#ffffff');
+                            $(this).parent().css('color', '#000000');
+                        }
+                    });
+                };
+    
+                reader.readAsArrayBuffer(file);
+                event.target.value = '';
+            }
+    
+            function processData(data) {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const table = document.getElementById('excelDataTable');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+    
+                const range = XLSX.utils.decode_range(sheet['!ref']);
+    
+                thead.id = 'excelTHead';
+                tbody.id = 'excelTBody';
+                table.appendChild(thead);
+                table.appendChild(tbody);
+    
+                g_excelTotalRowCount = range.e.r - range.s.r;
+    
+                if (arrExcelColumns.length > 0)
+                    arrExcelColumns = new Array();
+    
+                for (let rowNum = range.s.r; rowNum <= range.e.r; rowNum++) {
+    
+                    const row = document.createElement('tr');
+    
+                    for (let colNum = range.s.c; colNum <= range.e.c; colNum++) {
+                        const cellAddress = { c: colNum, r: rowNum };
+                        const cellRef = XLSX.utils.encode_cell(cellAddress);
+                        const cell = sheet[cellRef];
+                        cellElement = '';
+    
+                        if (rowNum == 0) {
+                            cellElement = 'th';
+                            arrExcelColumns.push(cell.v);
+                        }
+                        else
+                            cellElement = 'td';
+    
+                        const td = document.createElement(cellElement);
+                        td.id = 'excelDataColumns_' + rowNum + '_' + colNum;
+                        td.textContent = cell ? cell.v : '';
+                        row.appendChild(td);
+                    }
+    
+                    // 발행결과 컬럼 추가
+                    let cellType = '';
+                    if (rowNum == 0) {
+                        cellType = 'th';
+                    }
+                    else
+                        cellType = 'td';
+                    const tdResult = document.createElement(cellType);
+                    tdResult.id = 'printResultColumn_' + rowNum;
+                    tdResult.textContent = cellType == 'th' ? '발행결과' : '';
+                    row.insertBefore(tdResult, row.firstChild);
+    
+    
+                    // Add checkbox to each row
+                    if (rowNum == 0) {
+                        const checkAll = document.createElement('th');
+                        checkAll.className = 'checkAll';
+                        checkAll.textContent = '선택';
+                        row.insertBefore(checkAll, row.firstChild);
+                    }
+                    else {
+    
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.className = 'rowCheckbox';
+                        checkbox.name = 'rowSelect';
+                        checkbox.value = rowNum;
+                        row.insertBefore(document.createElement('td').appendChild(checkbox), row.firstChild);
+                    }
+    
+    
+                    if (rowNum == 0)
+                        thead.appendChild(row);
+                    else
+                        tbody.appendChild(row);
+                }
+    
+                // 엑셀컬럼명을 콤보박스의 옵션으로 동적 생성
+                if (arrExcelColumns.length > 0) {
+                    const cbEpcColumns = document.querySelector('#cbEpcColumns');
+                    cbEpcColumns.options.length = 0;
+    
+                    for (let i = 0; i < arrExcelColumns.length; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.innerText = arrExcelColumns[i];
+                        cbEpcColumns.append(option);
+                    }
+                }
+            }
+    
+            function clearExistExcelData(table) {
+                let theadLen = $(table + '>thead').length;
+                let tbodyLen = $(table + '>tbody').length;
+    
+                if (theadLen > 0)
+                    $(table + '>thead').remove();
+                if (tbodyLen > 0)
+                    $(table + '>tbody').remove();
+            }
+    
+            function handlerFromNo() {
+                let value = $('#fromNo').val();
+                targetRowFrom = +value;
+                let tmpToVal = +value + targetPrintQty - 1;
+    
+                $('#toNo').val(tmpToVal);
+                targetRowTo = tmpToVal;
+    
+                $('.rowCheckbox').prop('checked', false);
+                $('.rowCheckbox').each(function (index, elements) {
+                    if (index >= targetRowFrom - 1 && index < targetRowTo) {
+                        this.checked = true;
+                        $(this).parent().css('background', '#0E8BD8');
+                        $(this).parent().css('color', '#ffffff');
+    
+                    }
+                    else {
+                        $(this).parent().css('background', '#ffffff');
+                        $(this).parent().css('color', '#000000');
+                    }
+                });
+            }
+    
+            function handlerToNo() {
+                let value = $('#toNo').val();
+                targetRowTo = +value;
+    
+                $('.rowCheckbox').prop('checked', false);
+            }
+    
+            function handlerPrintQty() {
+                let value = $('#printQty').val();
+                targetPrintQty = +value;
+                let tmpToVal = +value + targetRowFrom - 1;
+                $('#toNo').val(tmpToVal);
+                targetRowTo = tmpToVal;
+    
+                $('.rowCheckbox').prop('checked', false);
+                $('.rowCheckbox').each(function (index, elements) {
+                    if (index >= targetRowFrom - 1 && index < targetRowTo) {
+                        this.checked = true;
+                        $(this).parent().css('background', '#0E8BD8');
+                        $(this).parent().css('color', '#ffffff');
+    
+                    }
+                    else {
+                        $(this).parent().css('background', '#ffffff');
+                        $(this).parent().css('color', '#000000');
+                    }
+                });
+            }
+    
+            function setPrintQty(qty) {
+                if (qty == 'all') {
+                    $('#fromNo').val(1);
+                    handlerFromNo();
+                    if (g_allRowsSelected == false) {
+                        $('#printQty').val(g_excelTotalRowCount);
+                        g_allRowsSelected = true;
+                        $('#btn-select-all').text('선택 해제');
+                    }
+                    else {
+                        $('#printQty').val(0);
+                        g_allRowsSelected = false;
+                        $('#btn-select-all').text('전체 선택');
+                    }
+                }
+                else {
+                    g_allRowsSelected = false;
+                    $('#btn-select-all').text('전체 선택');
+                    $('#printQty').val(qty);
+                }
+    
+                handlerPrintQty();
+            }
+    
+            function inputNum(id) {
+                var element = document.getElementById(id);
+                element.value = element.value.replace(/[^0-9]/gi, "");
+            }
+    
+            function ShowLoadingExcel() {
+                var maskHeight = 500;
+                var maskWidth = window.document.body.clientWidth;
+                let imgPosX = (maskWidth / 2) + 'px';
+    
+                var loadingImg = '';
+                loadingImg += "<div id='loadingImg'>";
+                loadingImg += (" <img src='./LOADING.gif' style='position:absolute; z-index:9500; text-align:center; display:block; margin-top:150px; margin-left:"+imgPosX+";' />");
+                loadingImg += "</div>";
+                $('.loadingImg').append(loadingImg);
+                $('#loadingImg').show();
+            }
+    
+            function CloseLoading() {
+                $('#loadingImg').hide();
+                $('#loadingImg').remove();
+            }
+        </script>
+
+    <style>
+        html, body {
+            width: 100%;
+        }
+
+        :root {
+            --button-color: #ffffff;
+            --button-bg-color: #0E8BD8;
+            --button-hover-bg-color: #095381;
+        }
+
+        .tableBox {
+            margin: 0 20px;
+            padding: 0px;
+            position: relative;
+            top: 0px;
+            left: 0px;
+            width: 98%;
+            height: 510px;
+            overflow-y: scroll;
+            border-top: 2px solid #0E8BD8;
+            border-bottom: 1px solid #0E8BD8;
+        }
+
+
+        .tableData {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        .tableData thead tr th {
+            position: sticky;
+            top: 0;
+            background: #ededed;
+            font-size: 12px;
+            padding: 10px 0;
+            color: #000;
+        }
+
+        .tableData thead tr th,
+        .tableData tbody tr td {
+            padding: 5px 0;
+            box-sizing: border-box;
+            border-bottom: 1px solid #dedede;
+            border-right: 1px solid #ddd;
+            word-break: break-all;
+            font-size: 11px;
+        }
+
+
+        button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: var(--button-bg-color);
+            color: var(--button-color);
+            margin: 10px;
+            padding: 0.8rem 1.8rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            display: inline-block;
+            width: auto;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        button:active,
+        button:hover,
+        button:focus {
+            background: var(--button-hover-bg-color);
+            outline: 0;
+        }
+
+        button:disabled {
+            oppacity: 0.5;
+        }
+
+        .printStatus {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 96%;
+            background-color: #e0e0e0;
+            margin: 15px 0px 0px 15px;
+            padding: 10px 20px;
+        }
+
+        .itemQty a {
+            margin: 0 5px;
+            color: #ffffff;
+            font-size: 12px;
+            background: #505050;
+            border-radius: 5px;
+            text-decoration: none;
+            padding: 4px 10px;
+        }
+        
+        .itemQty a:active,
+        .itemQty a:hover,
+        .itemQty a:focus {
+            background: #0D79BB;
+            outline: 0;
+        }
+
+        .btn-formfile {
+            width: 150px;
+            height: 30px;
+            background: #f0f0f0;
+            border: 1px solid rgb(77,77,77);
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &:hover
+
+            {
+                background: rgb(77,77,77);
+                color: #fff;
+            }
+        }
+        .btn-resetErrorCount {
+            width: 150px;
+            height: 25px;
+            background: #0E8BD8;
+            color: #fff;
+            margin: 0px 0px;
+            padding: 5px 20px;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            display: inline-block;
+            width: auto;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: 0.5s;
+            &:hover
+
+            {
+                background: rgb(77,77,77);
+                color: #fff;
+            }
+        }
+    </style>
+</head>
+<body style="margin:0; ">
+    <div style="display:flex;background: #095381;">
+        <div style="width: 50%; font-size:30px; font-weight: 700; margin: 0; color:white; padding: 10px 25px;">ANYTRON 태그발급시스템 (WEB)</div>
+        <div style="width: 50%; font-size:14px; font-weight: 500; margin: 0; color:white; padding: 30px 20px 10px 0px; text-align: right;">(주)바이텍테크놀로지</div>
+    </div>
+    <div style="margin: 15px 30px; display: flex;">
+        <div style="width: 130px;font-weight: 600;">발행기 연결정보</div>
+        <div style="width: 160px;">
+            <input type="radio" name="connect_type" value="USB" checked onclick="javascript: SetConnectionType('USB');" />USB
+            <input type="radio" name="connect_type" value="IP" onclick="javascript: SetConnectionType('IP');" />TCP/IP
+        </div>
+        <div>IP주소 : <input type="text" id="ip_address" size="14" readonly maxlength="15" value="192.168.0.46" onchange="SetIpAddress(this.value);" /></div>
+        <div style="width:20px;"></div>
+        <div>TCP포트 : <input type="text" id="tcp_port" size="8" readonly maxlength="5" value="9100" onchange="SetTcpPort(this.value);" /></div>
+    </div>
+    <div style="padding:0 20px;">
+        <button onclick="Setup()">프린터설정</button>
+        <button onclick="BitekTagPrintFirst()">태그발행</button>
+        <button onclick="setPrintPause()">태그발행 중지</button>
+        <button onclick="tagPrintXWSSinit()">WSS 초기화/연결</button>
+        <button onclick="TagPrinter.doCloseTagPrintXWSS()">WSS 연결닫기</button>
+    </div>
+    <div style="height:10px;"></div>
+    <div style="margin:0px 20px; display:flex;">
+        <label for="formlnput"><div class="btn-formfile">서식파일 선택</div></label>
+        <input type="file" id="formlnput" name="formlnput" accept=".txt" style="display:none;" />
+        <input type="text" id="formFilePath" size="100" value="" style="margin:0px 10px;" />
+    </div>
+    <div style="height:10px;"></div>
+    <div style="margin:0px 20px; display:flex;">
+        <label for="excelInput"><div class="btn-formfile">엑셀파일 선택</div></label>
+        <input type="file" id="excelInput" name="excelInput" accept=".xlsx, .xls" style="display:none;" />
+        <input type="text" id="excelFilePath" size="100" value="" style="margin:0px 10px;" />
+    </div>
+    <div style="height:10px;"></div>
+    <div id="log_box" style="margin:0px 20px;">
+        <script>
+            if (g_logMode == "DEBUG") $('#log_box').after("<textarea id='comm_log' style='margin:0 20px;width:97%; height:70px; overflow-x:hidden;overflow-y:scroll;font-size: 11px;border:1px solid #c0c0c0; color:#404040;'></textarea>");
+        </script>
+    </div>
+    <div style="margin:10px 20px; display:flex; align-items: center; height:40px;">
+        <div style="width:150px;background-color:#404040; text-align:center; padding:5px; color: #fff; font-weight:600;">발행대상 선택</div>
+        <label style="margin:0px 0px 0px 20px;">시작번호</label><input type="text" id="fromNo" size="4" value="1" style="margin:0px 20px 0px 10px; text-align: center;" onchange="handlerFromNo()" onInput="inputNum(this.id)" />
+        <label>끝번호</label><input type="text" id="toNo" size="4" value="1" style="margin:0px 20px 0px 10px; text-align: center;" onchange="handlerToNo()" onInput="inputNum(this.id)" readonly />
+        <label>발행수량</label><input type="text" id="printQty" size="4" value="1" style="margin:0px 20px 0px 10px; text-align: center;" onchange="handlerPrintQty()" onInput="inputNum(this.id)" />
+        <div class="itemQty">
+            <a href="javascript:setPrintQty(5);">5개 선택</a><a href="javascript:setPrintQty(100);">100개 선택</a><a id="btn-select-all" href="javascript:setPrintQty('all');">전체 선택</a>
+        </div>
+        <div style="width:150px;background-color:#404040; text-align:center; padding:5px; margin:10px 0px 10px 30px; color: #fff; font-weight:600;">EPC컬럼명</div>
+        <select id="cbEpcColumns" style="margin:0px 30px 0px 10px; width:200px; height:30px; border-radius: 4px; outline: 0 none;"><option></option></select>
+    </div>
+    <div class="loadingImg"></div>
+    <div class="wrapper">
+        <div class="tableBox">
+            <table id="excelDataTable" class="tableData"></table>
+        </div>
+    </div>
+    <div class="printStatus" style="font-weight: 500;">
+        <div style="width: 140px;">발행중인 행번호 : </div>
+        <div id="current_print_id" style="width:40px; text-align:right; margin-right:30px;font-weight: 700;">0</div>
+        <div style="width: 80px;">발행현황 : </div>
+        <div id="print_progress" style="width:60px; text-align:right; margin-right: 30px;font-weight: 700;">0 / 0</div>
+        <div style="width: 80px;">에러매수 : </div>
+        <div id="error_qty" style="width:60px; text-align:right; margin-right: 30px;font-weight: 700;">0</div>
+        <div style="width: 140px;">마지막 발행결과 : </div>
+        <div id="current_print_result" style="width:50px; margin-right: 30px;font-weight: 700;">-</div>
+        <div style="width: 80px;">에러코드 : </div>
+        <div id="last_error_code" style="width:40px; margin-right: 30px;font-weight: 700;">-</div>
+        <div style="width: 80px;">에러내용 : </div>
+        <div id="last_error_msg" style="margin-right: 20px;font-weight: 700;">없음</div>
+        <div><a class = "btn-resetErrorCount" href="javascript:InitErrorCount();">에러매수 초기화</a></div>
+    </div>
+    <script language="javascript">
+
+    </script>
+</body>
+</html>
+
