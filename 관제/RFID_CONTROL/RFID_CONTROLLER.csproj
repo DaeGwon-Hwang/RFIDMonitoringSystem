@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{155B8BBE-62A2-4864-B0E1-2B21DE757975}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>RFID_CONTROLLER</RootNamespace>
+    <AssemblyName>RFID_CONTROLLER</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.Desktop.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Drawing.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v22.2.Core, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v22.2, Version=22.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\Data.cs" />
+    <Compile Include="Collections\DataList.cs" />
+    <Compile Include="Control\Editors\CheckBoxEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\CheckBoxEditor.designer.cs">
+      <DependentUpon>CheckBoxEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\ComboBoxEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\ComboBoxEditor.designer.cs">
+      <DependentUpon>ComboBoxEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\FileAttachEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\FileAttachEditor.Designer.cs">
+      <DependentUpon>FileAttachEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\IBaseEditor.cs" />
+    <Compile Include="Control\Editors\MemoEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\MemoEditor.designer.cs">
+      <DependentUpon>MemoEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\PhoneNumberEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\PhoneNumberEditor.designer.cs">
+      <DependentUpon>PhoneNumberEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\RadioEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\RadioEditor.designer.cs">
+      <DependentUpon>RadioEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\SvgLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\SvgLabel.designer.cs">
+      <DependentUpon>SvgLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Grid\GridColumnConverter.cs" />
+    <Compile Include="Control\Grid\GridExtension.cs" />
+    <Compile Include="Control\Panels\RoundBorderPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\TextEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\TextEditor.designer.cs">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\TitleLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\TitleLabel.designer.cs">
+      <DependentUpon>TitleLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Editors\YearMonthEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\Editors\YearMonthEditor.designer.cs">
+      <DependentUpon>YearMonthEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Programs\IBaseProgram.cs" />
+    <Compile Include="Frm\EquipmentManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\EquipmentManager.Designer.cs">
+      <DependentUpon>EquipmentManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\MainController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\MainController.Designer.cs">
+      <DependentUpon>MainController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\Map1F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\Map1F.Designer.cs">
+      <DependentUpon>Map1F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\Map2F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\Map2F.Designer.cs">
+      <DependentUpon>Map2F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\MapB1F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\MapB1F.Designer.cs">
+      <DependentUpon>MapB1F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\MapB2F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\MapB2F.Designer.cs">
+      <DependentUpon>MapB2F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\SignManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\SignManager.Designer.cs">
+      <DependentUpon>SignManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm\SWManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm\SWManager.Designer.cs">
+      <DependentUpon>SWManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusPanel.Designer.cs">
+      <DependentUpon>StatusPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UnauthOutPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UnauthOutPanel.Designer.cs">
+      <DependentUpon>UnauthOutPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
+    <Compile Include="TCPRequest.cs" />
+    <Compile Include="TCPClient.cs" />
+    <EmbeddedResource Include="Control\Editors\CheckBoxEditor.resx">
+      <DependentUpon>CheckBoxEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\ComboBoxEditor.resx">
+      <DependentUpon>ComboBoxEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\FileAttachEditor.resx">
+      <DependentUpon>FileAttachEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\MemoEditor.resx">
+      <DependentUpon>MemoEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\PhoneNumberEditor.resx">
+      <DependentUpon>PhoneNumberEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\RadioEditor.resx">
+      <DependentUpon>RadioEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\TextEditor.resx">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\SvgLabel.resx">
+      <DependentUpon>SvgLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\TitleLabel.resx">
+      <DependentUpon>TitleLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\Editors\YearMonthEditor.resx">
+      <DependentUpon>YearMonthEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\EquipmentManager.resx">
+      <DependentUpon>EquipmentManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\MainController.resx">
+      <DependentUpon>MainController.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\Map1F.resx">
+      <DependentUpon>Map1F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\Map2F.resx">
+      <DependentUpon>Map2F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\MapB1F.resx">
+      <DependentUpon>MapB1F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\MapB2F.resx">
+      <DependentUpon>MapB2F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\SignManager.resx">
+      <DependentUpon>SignManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm\SWManager.resx">
+      <DependentUpon>SWManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="StatusPanel.resx">
+      <DependentUpon>StatusPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UnauthOutPanel.resx">
+      <DependentUpon>UnauthOutPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\new map 2.png" />
+    <None Include="Resources\new map.png" />
+    <None Include="Resources\지하2 도면.png" />
+    <None Include="Resources\지하1 도면.png" />
+    <None Include="Resources\지상2 도면.png" />
+    <None Include="Resources\지상1 도면.png" />
+    <None Include="Resources\tmpMapImge.jpg" />
+    <None Include="Resources\btn_cal.bmp" />
+    <Content Include="favicon.ico" />
+    <None Include="Resources\B1.png" />
+    <None Include="Resources\B2.png" />
+    <None Include="Resources\actions_arrow3right.svg" />
+    <Content Include="Resources\Common\Images\btn_cal.png" />
+    <Content Include="Resources\Common\Images\btn_cal_on.png" />
+    <Content Include="Resources\Common\Images\btn_cal_ov.png" />
+    <None Include="Resources\ico-btn-add.png" />
+    <None Include="Resources\ico-btn-add_black.png" />
+    <None Include="Resources\ico-bottom-list1.png" />
+    <None Include="Resources\ico-bottom-list2.png" />
+    <None Include="Resources\ico-btn-add2.png" />
+    <None Include="Resources\ico-gnb-list1.png" />
+    <None Include="Resources\ico-gnb-list1-ov.png" />
+    <None Include="Resources\ico-gnb-list2.png" />
+    <None Include="Resources\ico-gnb-list2-ov.png" />
+    <None Include="Resources\ico-pop-warning1.png" />
+    <None Include="Resources\ico-pop-warning2.png" />
+    <None Include="Resources\ico-gnb-exit.png" />
+    <None Include="Resources\ico-gnb-exit%402x.png" />
+    <None Include="Resources\ico-gnb-exit-ov.png" />
+    <None Include="Resources\ico-gnb-exit-ov%402x.png" />
+    <None Include="Resources\ico-bottom-list3.png" />
+    <None Include="Resources\gate-status-green-big.png" />
+    <None Include="Resources\gate-status-green-small.png" />
+    <None Include="Resources\gate-status-orange-big.png" />
+    <None Include="Resources\gate-status-orange-small.png" />
+    <None Include="Resources\img-circle-b.png" />
+    <None Include="Resources\img-circle-b-big.png" />
+    <None Include="Resources\img-circle-g-big.png" />
+    <None Include="Resources\img-circle-b-big-32.png" />
+    <None Include="Resources\img-circle-g-big-32.png" />
+    <None Include="Resources\F1.png" />
+    <None Include="Resources\F2.png" />
+    <Content Include="Resources\img-circle-g.png" />
+    <None Include="Resources\img-circle-o-big.png" />
+    <None Include="Resources\img-circle-o-b.png" />
+    <None Include="Resources\img-circle-o-big-32.png" />
+    <Content Include="Resources\img-circle-o.png" />
+    <None Include="Resources\img-head-btn-C.png" />
+    <None Include="Resources\img-head-btn-C-ov.png" />
+    <None Include="Resources\img-head-btn-I.png" />
+    <None Include="Resources\img-head-btn-I-ov.png" />
+    <None Include="Resources\img-head-btn-M.png" />
+    <None Include="Resources\img-head-btn-M-ov.png" />
+    <None Include="Resources\img-head-btn-P.png" />
+    <None Include="Resources\img-head-btn-P-ov.png" />
+    <None Include="Resources\img-search.png" />
+    <None Include="Resources\img-circle-r.png" />
+    <None Include="Resources\img-circle-r-big.png" />
+    <None Include="Resources\img-circle-r-big-32.png" />
+    <Content Include="Resources\map01.png" />
+    <Content Include="Resources\map02.png" />
+    <Content Include="Resources\map03.png" />
+    <Content Include="Resources\map04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

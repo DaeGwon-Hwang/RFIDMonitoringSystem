@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFID_CONTROLLER", "RFID_CONTROLLER.csproj", "{155B8BBE-62A2-4864-B0E1-2B21DE757975}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupController", "..\SetupController\SetupController.vdproj", "{811812B8-8DAD-44D0-AE32-635D54EB8A81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{155B8BBE-62A2-4864-B0E1-2B21DE757975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{155B8BBE-62A2-4864-B0E1-2B21DE757975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{155B8BBE-62A2-4864-B0E1-2B21DE757975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{155B8BBE-62A2-4864-B0E1-2B21DE757975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811812B8-8DAD-44D0-AE32-635D54EB8A81}.Debug|Any CPU.ActiveCfg = Debug
+		{811812B8-8DAD-44D0-AE32-635D54EB8A81}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {279DE051-742A-49FC-87C8-9A0729367C03}
+	EndGlobalSection
+EndGlobal
