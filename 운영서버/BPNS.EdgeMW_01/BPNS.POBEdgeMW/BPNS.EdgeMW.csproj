@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientSocketHandler.cs" />
+    <Compile Include="DB\DatabaseManagementMSSQL.cs" />
     <Compile Include="DB\DatabaseManagementOracle.cs" />
     <Compile Include="DB\IDatabassManagement.cs" />
     <Compile Include="Log.cs" />
