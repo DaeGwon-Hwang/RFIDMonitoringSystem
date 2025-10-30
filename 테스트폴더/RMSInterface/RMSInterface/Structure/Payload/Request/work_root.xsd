@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+	<!-- Root Element -->
+	<xs:element name="work_root">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="work_info" type="WorkInfoType"/>
+				<xs:element name="send_info" type="NetworkInfoType"/>
+				<xs:element name="receive_info" type="NetworkInfoType"/>
+				<xs:element name="param_list" type="ParamListType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Work Info -->
+	<xs:complexType name="WorkInfoType">
+		<xs:sequence>
+			<xs:element name="work_key" type="xs:string"/>
+			<xs:element name="work_div" type="xs:string"/>
+			<xs:element name="work_code" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Network Info (send_info, receive_info) -->
+	<xs:complexType name="NetworkInfoType">
+		<xs:attribute name="ip" type="xs:string" use="required"/>
+		<xs:attribute name="port" type="xs:int" use="required"/>
+	</xs:complexType>
+
+	<!-- Param List -->
+	<xs:complexType name="ParamListType">
+		<xs:sequence>
+			<xs:element name="param" type="ParamType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<!-- Param -->
+	<xs:complexType name="ParamType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+</xs:schema>
