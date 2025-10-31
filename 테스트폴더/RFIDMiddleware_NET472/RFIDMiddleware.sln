@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFIDMiddleware.Client", "RFIDMiddleware.Client\RFIDMiddleware.Client.csproj", "{A180019A-C84F-32CA-660E-49EC39AAF9E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFIDMiddleware.Server", "RFIDMiddleware.Server\RFIDMiddleware.Server.csproj", "{FEECCF78-1D37-ED04-8ECA-15CD4D8DC2AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFIDMiddleware.Shared", "RFIDMiddleware.Shared\RFIDMiddleware.Shared.csproj", "{F32B3171-7CF6-13BF-6783-BF5AC04C5423}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A180019A-C84F-32CA-660E-49EC39AAF9E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A180019A-C84F-32CA-660E-49EC39AAF9E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A180019A-C84F-32CA-660E-49EC39AAF9E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A180019A-C84F-32CA-660E-49EC39AAF9E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEECCF78-1D37-ED04-8ECA-15CD4D8DC2AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEECCF78-1D37-ED04-8ECA-15CD4D8DC2AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEECCF78-1D37-ED04-8ECA-15CD4D8DC2AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEECCF78-1D37-ED04-8ECA-15CD4D8DC2AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F32B3171-7CF6-13BF-6783-BF5AC04C5423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F32B3171-7CF6-13BF-6783-BF5AC04C5423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F32B3171-7CF6-13BF-6783-BF5AC04C5423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F32B3171-7CF6-13BF-6783-BF5AC04C5423}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

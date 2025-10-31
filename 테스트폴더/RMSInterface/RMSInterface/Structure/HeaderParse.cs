@@ -9,13 +9,24 @@ namespace RMSInterface.Structure
 {
     public class HeaderParse
     {
-        private Header header {  get; set; }
+        public  int headerSize { get; private set; } = 12;
+        private RMSInterface.Structure.Header header {  get; set; }
+
+
         public HeaderParse() 
         {
-            header = new Header();
-
+            header = new RMSInterface.Structure.Header();
         }
 
+        public Header SetHeader(byte[] bytes)
+        {
+            header = new RMSInterface.Structure.Header();
+            byte[] _headerPackit = new byte[headerSize];
+            Buffer.BlockCopy(bytes, 0, _headerPackit, 0, headerSize);
+            Parse(_headerPackit);
+
+            return header;
+        }
 
         private void Parse(byte[] bytes)
         {

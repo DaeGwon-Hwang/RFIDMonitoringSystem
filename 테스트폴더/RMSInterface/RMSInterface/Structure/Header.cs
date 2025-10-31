@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RMSInterface.Structure
 {
-    internal class Header
+    public class Header
     {
         /// <summary>
         /// Command Type	Request	Response	Remark
